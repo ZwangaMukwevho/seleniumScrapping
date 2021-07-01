@@ -30,15 +30,15 @@ def getCategories():
     # Looping through each cartegory item ("owl-item") in the whole list of items
     for cart in cartegories:
         departmentName = cart.find_element_by_class_name("department__title")
-        print(departmentName.text)
         # print("cartegories ",departmentName.get_attribute('textContent'))
-        #cartList.append(departmentName.get_attribute('textContent'))
+        cartList.append(departmentName.get_attribute('textContent'))
     
     # Return a list that holds all the cartegories
     return cartList
 
 # Clicking on the specific cartegory
 testList = getCategories()
+print(testList)
 #rint(testList)
 # link = driver.find_element_by_link_text(testList[0])
 # link.click()
