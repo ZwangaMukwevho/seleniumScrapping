@@ -29,9 +29,13 @@ def getCategories():
     cartList = []
     # Looping through each cartegory item ("owl-item") in the whole list of items
     for cart in cartegories:
-        departmentName = cart.find_element_by_class_name("department__title")
-        # print("cartegories ",departmentName.get_attribute('textContent'))
-        cartList.append(departmentName.get_attribute('textContent'))
+        try:
+            departmentName = cart.find_element_by_class_name("department__title")
+            title = departmentName.get_attribute('textContent')
+            cartList.append(title)
+        except:
+            driver.implicitly_wait(0.5)
+
     
     # Return a list that holds all the cartegories
     return cartList
@@ -39,24 +43,29 @@ def getCategories():
 # Clicking on the specific cartegory
 testList = getCategories()
 print(testList)
+print(testList[0])
+
 #rint(testList)
-# link = driver.find_element_by_link_text(testList[0])
-# link.click()
-cartegoriesCarousel = driver.find_element_by_class_name("carousel__component-departments")
 
-cartegories = cartegoriesCarousel.find_elements_by_class_name("owl-item")
-driver.implicitly_wait(5)
+time.sleep(20)
+link = driver.find_element_by_link_text(testList[0])
+time.sleep(20)
+link.click()
+# cartegoriesCarousel = driver.find_element_by_class_name("carousel__component-departments")
 
-cartList = []
-action = ActionChains(driver)
-# Looping through each cartegory item ("owl-item") in the whole list of items
-for cart in cartegories:
-    departmentName = cart.find_element_by_class_name("department__image")
-    action.move_to_element(departmentName)
-    action.click()
-    action.perform()
-    break
-    driver.implicitly_wait(5)
+# cartegories = cartegoriesCarousel.find_elements_by_class_name("owl-item")
+# driver.implicitly_wait(5)
+
+# cartList = []
+# action = ActionChains(driver)
+# # Looping through each cartegory item ("owl-item") in the whole list of items
+# for cart in cartegories:
+#     departmentName = cart.find_element_by_class_name("department__image")
+#     action.move_to_element(departmentName)
+#     action.click()
+#     action.perform()
+#     break
+#     driver.implicitly_wait(5)
     
     
 
@@ -64,6 +73,3 @@ for cart in cartegories:
 
 time.sleep(3)
 driver.quit() # Closes the browser tab
-
-# with open('/mnt/c/Users/zwang/OneDrive/Desktop/Apps/tests.txt') as f:
-#     print(f.readlines())
