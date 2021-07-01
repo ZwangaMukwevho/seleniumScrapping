@@ -49,14 +49,15 @@ print(testList[0])
 
 # Define wait condition
 wait = WebDriverWait(driver, 20)
+
+# Link to go first category
 link = wait.until(EC.element_to_be_clickable((By.LINK_TEXT, testList[0])))
 link.click()
 
-# time.sleep(20)
-# link = driver.find_element_by_link_text(testList[0])
-# time.sleep(20)
-# link.click()
-# cartegoriesCarousel = driver.find_element_by_class_name("carousel__component-departments")
+# Link to move to next page in category
+paginationLink = wait.until(EC.element_to_be_clickable((By.CLASS_NAME,"pagination-next")))
+paginationLink.click()
+
 
 # cartegories = cartegoriesCarousel.find_elements_by_class_name("owl-item")
 # driver.implicitly_wait(5)
