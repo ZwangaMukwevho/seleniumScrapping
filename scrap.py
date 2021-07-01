@@ -29,6 +29,8 @@ def getCategories():
     cartList = []
     # Looping through each cartegory item ("owl-item") in the whole list of items
     for cart in cartegories:
+
+        # If any category times out restart search for cartegories
         try:
             departmentName = cart.find_element_by_class_name("department__title")
             title = departmentName.get_attribute('textContent')
@@ -45,12 +47,15 @@ testList = getCategories()
 print(testList)
 print(testList[0])
 
-#rint(testList)
-
-time.sleep(20)
-link = driver.find_element_by_link_text(testList[0])
-time.sleep(20)
+# Define wait condition
+wait = WebDriverWait(driver, 20)
+link = wait.until(EC.element_to_be_clickable((By.LINK_TEXT, testList[0])))
 link.click()
+
+# time.sleep(20)
+# link = driver.find_element_by_link_text(testList[0])
+# time.sleep(20)
+# link.click()
 # cartegoriesCarousel = driver.find_element_by_class_name("carousel__component-departments")
 
 # cartegories = cartegoriesCarousel.find_elements_by_class_name("owl-item")
