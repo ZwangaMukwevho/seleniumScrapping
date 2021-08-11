@@ -9,8 +9,11 @@ from selenium.webdriver.support import expected_conditions as EC
 # import Action chains 
 from selenium.webdriver.common.action_chains import ActionChains
 
-import time
+# Import exceptions
+from selenium.common.exceptions import NoSuchElementException
 
+import time
+from bs4 import BeautifulSoup
 # Path to chrome driver
 PATH = "/mnt/c/Users/zwang/OneDrive/Desktop/Apps/chromedriver.exe"
 options = webdriver.ChromeOptions()
@@ -42,21 +45,51 @@ def getCategories():
     # Return a list that holds all the cartegories
     return cartList
 
+# Checks whether pagination has reached last page
+def nextPage(drive):
+    output = drive.find_element_by_class_name("sort-refine-bar")
+    print("prettify")
+    soup = BeautifulSoup(output.get_attribute('innerHTML'), "html.parser")
+    next = soup.find(class_="pagination-next")
+    next_list = next.get('class')
+   
+    if len(next_list) != 1:
+        return False
+    return True
+
 # Clicking on the specific cartegory
 testList = getCategories()
-print(testList)
+
 print(testList[0])
 
 # Define wait condition
 wait = WebDriverWait(driver, 20)
 
 # Link to go first category
-link = wait.until(EC.element_to_be_clickable((By.LINK_TEXT, testList[0])))
+link = wait.until(EC.element_to_be_clickable((By.LINK_TEXT, testList[7])))
 link.click()
 
+
 # Link to move to next page in category
-paginationLink = wait.until(EC.element_to_be_clickable((By.CLASS_NAME,"pagination-next")))
-paginationLink.click()
+while nextPage(driver):
+    paginationLink = wait.until(EC.element_to_be_clickable((By.CLASS_NAME,"pagination-next")))
+    output = driver.find_element_by_class_name("sort-refine-bar")
+    soup = BeautifulSoup(output.get_attribute('innerHTML'), "html.parser")
+    next = soup.find(class_="pagination-next")
+    print(nextPage(driver))
+    
+    try:
+        output = driver.find_element_by_class_name("pagination-toolbar")
+        # output2 = output.find_element_by_class_name("col-xs-12 col-sm-6 col-md-7")
+        # print(output)
+        # print(output2)
+        # print(innerOutput.get_attribute('innerHTML'))
+    except NoSuchElementException:
+        print("not found "+str(i))
+
+    paginationLink.click()
+  
+   
 
 
 # cartegories = cartegoriesCarousel.find_elements_by_class_name("owl-item")
