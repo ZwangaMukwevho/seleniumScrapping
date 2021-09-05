@@ -74,8 +74,7 @@ class Checkers:
 
     def getProductInformation(self,driver):
         time.sleep(10)
-        products = driver.find_element_by_class_name("yCmsComponent product__list--wrapper yComponentWrapper product-grid-right-result-component")
+        products = driver.find_element_by_xpath("/html/body/main/div[6]/div[4]/div")
         items = products.find_elements_by_class_name("owl-item")
         for item in items:
-            
             print(item.get_attribute('textContent'))
