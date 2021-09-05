@@ -73,8 +73,10 @@ class Checkers:
         print("done")
 
     def getProductInformation(self,driver):
+        wait = WebDriverWait(driver, 20)
         time.sleep(10)
-        products = driver.find_element_by_xpath("/html/body/main/div[6]/div[4]/div")
+        products = wait.until(EC.presence_of_element_located((By.XPATH,"/html/body/main/div[6]/div[4]/div")))
+        # products = driver.find_element_by_xpath("/html/body/main/div[6]/div[4]/div")
         items = products.find_elements_by_class_name("owl-item")
         for item in items:
             print(item.get_attribute('textContent'))
