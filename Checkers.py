@@ -16,11 +16,13 @@ from selenium.common.exceptions import NoSuchElementException
 import asyncio
 import time
 from bs4 import BeautifulSoup
+import csv
 
 class Checkers:
-
-    def __init__(self,driver):
+    productDataObject = None
+    def __init__(self,driver,productDatObject):
         self.driver = driver
+        self.productDatObject = productDatObject
 
     # Function to get all the main cartegories from the checkers website
     async def getCategories(self,driver):
@@ -56,27 +58,67 @@ class Checkers:
             return False
         return True
 
-    async def gatherCategoryData(self,driver,category):
+    async def gatherCategoryData(self,driver,category,name):
         '''Gathers all data from a given category page'''
-        wait = WebDriverWait(driver, 20)
+        wait = WebDriverWait(driver, 13)
 
         # Link to go first category
-        link = wait.until(EC.element_to_be_clickable((By.LINK_TEXT, category)))
-        link.click()
+        try:
+            link = wait.until(EC.element_to_be_clickable((By.LINK_TEXT, category)))
+            link.click()
+        except:
+            self.findCategory(driver,category)
 
+        
+
+        csv_file = open(name,"w")
+        csv_writer = csv.writer(csv_file,delimiter=',')
+        csv_writer.writerow(['title','imageUrl','Sale Price','Normal Price','sale Type','Promo message','Due date'])
+
+        # Getting the data from individual products using the productData object
+        #self.productDatObject.gatherProducts(driver)
+        self.productDatObject.gatherProducts(driver,csv_writer)
 
         # Link to move to next page in category
         while await self.nextPage(driver):
             paginationLink = wait.until(EC.element_to_be_clickable((By.CLASS_NAME,"pagination-next")))
             paginationLink.click()
+    
+
+            #self.productDatObject.gatherProducts(driver)
+            self.productDatObject.gatherProducts(driver,csv_writer)
         
         print("done")
+        csv_file.close()
 
     def getProductInformation(self,driver):
         wait = WebDriverWait(driver, 20)
-        time.sleep(10)
         products = wait.until(EC.presence_of_element_located((By.XPATH,"/html/body/main/div[6]/div[4]/div")))
-        # products = driver.find_element_by_xpath("/html/body/main/div[6]/div[4]/div")
         items = products.find_elements_by_class_name("owl-item")
         for item in items:
             print(item.get_attribute('textContent'))
+    
+    def findCategory(self, driver, category):
+        """Clicks the pagination next button if category item is not in current page view
+
+        :param driver: selenium driver nativagating the page
+        :type driver: Selenium object
+        :param category: Category to be searched for
+        :type category: String
+        """
+        wait = WebDriverWait(driver, 5)
+        not_found = True
+        while(not_found):
+            try:
+                # Scroll to next cartegories
+                paginationLink = wait.until(EC.element_to_be_clickable((By.XPATH,"/html/body/main/div[6]/div[4]/div/div[1]/div/div[2]/div[3]/i")))
+                paginationLink.click()
+
+                # Click link
+                link = wait.until(EC.element_to_be_clickable((By.LINK_TEXT, category)))
+                link.click() 
+                return True
+            except:
+                pass
+
+        return False
