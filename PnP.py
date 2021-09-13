@@ -53,32 +53,28 @@ class PnP:
         """
 
         wait = WebDriverWait(driver, 10)
+
+        # Get HTML segment with h4 category tags embedded
         CategoryPageLink = wait.until(EC.presence_of_element_located((By.XPATH,"/html/body/main/div[4]/div/div[4]/div/div[3]/div/div/div")))
-        soup = BeautifulSoup(CategoryPageLink.get_attribute('innerHTML'), "html.parser")
-        #print(soup.prettify())
         categories = CategoryPageLink.find_elements_by_xpath("//div[@class='col-sm-2 col-xs-4 aisle-tile']")
         
-        for category in categories:
-            # print(category.get_attribute("innerHTML"))
-            soup = BeautifulSoup(category.get_attribute("innerHTML"), "html.parser")
-            title = category.find_element_by_xpath("//h4")
-            print(title.get_attribute("textContent"))
-            print("")
+        categoriesList = []
 
-        #CategoryPageLink = wait.until(EC.presence_of_element_located((By.XPATH,"/html/body/main/header/div[2]/div/nav/ul[2]/li[1]/a")))
-        # categoriesContainer = wait.until(EC.presence_of_element_located((By.XPATH,"/html/body/main/div[4]/div/div[4]/div/div[3]")))
-        # categories = categoriesContainer.find_elements_by_class_name("col-sm-2 col-xs-4 aisle-tile")
+        # Loop through all the cartegories
+        for category in categories:
         
-        # soup = BeautifulSoup(categoriesContainer.get_attribute('innerHTML'), "html.parser")
-        # containers = soup.find_all('div',class_='col-sm-2 col-xs-4 aisle-tile') # bs4
+            soup = BeautifulSoup(category.get_attribute("innerHTML"), "html.parser")
+            title =  category.find_element_by_css_selector("h4")
         
-        # print(len(categories))
-        # count = 0
-        # for category in categories:
-        #     print(count)
-        #     count += 1
-        #     soup = BeautifulSoup(category.get_attribute('innerHTML'), "html.parser")
-        #     print(soup.prettify())
+            # Check using beautiful soup to check if the category htlm tags are done
+            try:   
+                check = soup.find('img')['class'] #b4
+            except KeyError:
+                break
+                
+            categoriesList.append(title.text)
+            
+        return categoriesList
 
     def pressAccept(self,driver):
         """Presses the accept cookies when occurs
@@ -96,6 +92,7 @@ class PnP:
 
 pnp = PnP()
 pnp.AcceptCookies(driver)
-pnp.collectCategories(driver)
+categories_list = pnp.collectCategories(driver)
+print(categories_list)
 
 driver.quit()
