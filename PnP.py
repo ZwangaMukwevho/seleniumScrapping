@@ -162,8 +162,9 @@ class PnP:
             count = count + 1
             
             if count == 5:
-                print(product.get_attribute('innerHTML'))
-                print("")
+                # self.findImageUrl(product)
+                self.findImageTitle
+                # print(product.get_attribute('innerHTML'))
                 break
 
     def getProductName(self,driver,product):
@@ -175,9 +176,32 @@ class PnP:
         name = product.find_elements_by_class("item-name")
         print(name)
         return name
+    
+    def findImageUrl(self,productElement):
+        """Finds the image URL for the product
+
+        :param productElement: [Product element passed in from browseProducts function]
+        :type productElement: [Selenium element]
+        :return: [Image URL of the product]
+        :rtype: [String]
+        """
+        imageClass = productElement.find_element_by_class_name("thumb")
+        imageUrlElement = imageClass.find_element_by_xpath('//img')
+        imageUrl = imageUrlElement.get_attribute('src')
+        return imageUrl
+    
+    def findImageTitle(self,productElement):
+        titleClass = productElement.find_element_by_class_name("item-name")
+        print(titleClass.text)
+
+
+
 
 
 pnp = PnP()
+
+# pnp.changeWindowWidth(driver, 800)
+time.sleep(1)
 pnp.AcceptCookies(driver)
 categories_list = pnp.collectCategories(driver)
 
