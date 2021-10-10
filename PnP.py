@@ -159,12 +159,26 @@ class PnP:
         # Looping through the 
         count = 0
         for product in products:
+            print("product "+str(count))
+            ProductimageUrl = self.findImageUrl(product)
+            # ProductTitle =  self.findImageTitle(product)
+            # productPrice =  self.findProductPrice(product)
+            # productPromotion = self.getProductPromotion(product)
+            # print("product title: "+str(ProductTitle))
+            # print("Product price: "+str(productPrice))
+            # print("product image url: "+str(ProductimageUrl))
+            # print("product promotion"+str(productPromotion))
+            # print("")
             count = count + 1
             
             if count == 5:
-                # self.findImageUrl(product)
-                self.findImageTitle
-                # print(product.get_attribute('innerHTML'))
+                print("product "+str(count))
+                ProductimageUrl = self.findImageUrl(product)           
+            #     ProductimageUrl = self.findImageUrl(product)
+            #     ProductTitle =  self.findImageTitle(product)
+            #     productPrice =  self.findProductPrice(product)
+            #     # print(product.get_attribute('innerHTML'))
+            #     productPromotion = self.getProductPromotion(product)
                 break
 
     def getProductName(self,driver,product):
@@ -174,7 +188,7 @@ class PnP:
         :type driver: [type]
         """
         name = product.find_elements_by_class("item-name")
-        print(name)
+        # print(name)
         return name
     
     def findImageUrl(self,productElement):
@@ -186,14 +200,50 @@ class PnP:
         :rtype: [String]
         """
         imageClass = productElement.find_element_by_class_name("thumb")
-        imageUrlElement = imageClass.find_element_by_xpath('//img')
-        imageUrl = imageUrlElement.get_attribute('src')
+        # # print(imageClass.get_attribute('innerHTML'))
+        # imageUrlElement = imageClass.find_element_by_xpath('//img')
+        soup = BeautifulSoup(imageClass.get_attribute('innerHTML'), "html.parser")
+        imageUrl = soup.find('img')['src']
+        print(imageUrl)
+
+        # imageUrlElement = imageClass.find_element_by_xpath("//img[contains(@src,'pick-n-pay-header2.png')]")
+        # print(imageUrlElement.get_attribute('textContent'))
+        # print(imageUrlElement.get_attribute('innerHTML'))
+        # print(imageUrlElement.get_attribute('outerHTML'))
+        
+        # print(imageClass.get_attribute('innerHTML'))
+        # print(imageUrlElement.get_attribute('src'))
+        # imageUrl = imageUrlElement.get_attribute('src')
         return imageUrl
     
     def findImageTitle(self,productElement):
         titleClass = productElement.find_element_by_class_name("item-name")
-        print(titleClass.text)
+        # print(titleClass.text)
+        return titleClass.text
+        # print(titleClass.get_attribute('innerHTML'))
+    
+    def findProductPrice(self,productElement):
+        priceClass = productElement.find_element_by_class_name("product-price")
+        priceSubClass = priceClass.find_element_by_class_name("item-price")
+        currentPriceClass = priceSubClass.find_element_by_class_name("currentPrice  ")
+        
+        currentPrice = str(currentPriceClass.text)
+        currentPrice = currentPrice[:-2]+"."+currentPrice[-2:]
+        # print(currentPrice)
+        return currentPrice
+    
+    def getProductPromotion(self,productElement):
+        promotionClass = productElement.find_element_by_id("promotionContainer")
+        # print(promotionClass.text)
+        return promotionClass.text
+    
+    # def checkVitality(self,productElement):
 
+
+    #     # print(promotionClass.get_attribute("innerHTML"))
+    
+
+        
 
 
 
