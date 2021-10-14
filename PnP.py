@@ -23,6 +23,7 @@ options = webdriver.ChromeOptions()
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
 driver = webdriver.Chrome(executable_path=PATH,options=options)
 driver.get("https://www.pnp.co.za/pnpstorefront/pnp/en/All-Products/c/pnpbase")
+# driver.get("https://www.pnp.co.za/pnpstorefront/pnp/en/All-Products/Bakery/c/bakery-423144840?q=%3Arelevance&pageSize=72&page=0")
 
 class PnP:
     productDataObject = None
@@ -42,19 +43,7 @@ class PnP:
             wait = WebDriverWait(driver, 10)
             CategoryPageLink = wait.until(EC.presence_of_element_located((By.XPATH,"//*[@id=\"myModal\"]/div/div/div[3]/button[2]")))
             CategoryPageLink.click()
-         
-            # action = ActionChains(driver)
-            # print(CategoryPageLink.text)
-           
-            # link = wait.until(EC.element_to_be_clickable((By.LINK_TEXT,CategoryPageLink.text)))
-            # link.click()
-            # print("moved")
-            
-
-            # time.sleep(3)
-            # action.double_click(CategoryPageLink).perform()
-            #action.move_to_element_with_offset(CategoryPageLink, 0, -10).click().perform()
-            # CategoryPageLink.click()
+        
             return True
         except :
             return False
@@ -161,25 +150,26 @@ class PnP:
         for product in products:
             print("product "+str(count))
             ProductimageUrl = self.findImageUrl(product)
-            # ProductTitle =  self.findImageTitle(product)
-            # productPrice =  self.findProductPrice(product)
-            # productPromotion = self.getProductPromotion(product)
-            # print("product title: "+str(ProductTitle))
-            # print("Product price: "+str(productPrice))
-            # print("product image url: "+str(ProductimageUrl))
-            # print("product promotion"+str(productPromotion))
-            # print("")
+            ProductTitle =  self.findImageTitle(product)
+            productPrice =  self.findProductPrice(product)
+            productPromotion = self.getProductPromotion(product)
+            print("product title: "+str(ProductTitle))
+            print("Product price: "+str(productPrice))
+            print("product image url: "+str(ProductimageUrl))
+            print("product promotion"+str(productPromotion))
+            print("")
             count = count + 1
             
-            if count == 5:
-                print("product "+str(count))
-                ProductimageUrl = self.findImageUrl(product)           
-            #     ProductimageUrl = self.findImageUrl(product)
-            #     ProductTitle =  self.findImageTitle(product)
-            #     productPrice =  self.findProductPrice(product)
-            #     # print(product.get_attribute('innerHTML'))
-            #     productPromotion = self.getProductPromotion(product)
-                break
+            # if count == 5:
+            #     print("product "+str(count))
+            #     ProductimageUrl = self.findImageUrl(product)           
+            # #     ProductimageUrl = self.findImageUrl(product)
+            # #     ProductTitle =  self.findImageTitle(product)
+            # #     productPrice =  self.findProductPrice(product)
+            # #     # print(product.get_attribute('innerHTML'))
+            # #     productPromotion = self.getProductPromotion(product)
+            #     break
+        # self.paginationNext(driver)
 
     def getProductName(self,driver,product):
         """Returns name of product
@@ -200,20 +190,9 @@ class PnP:
         :rtype: [String]
         """
         imageClass = productElement.find_element_by_class_name("thumb")
-        # # print(imageClass.get_attribute('innerHTML'))
-        # imageUrlElement = imageClass.find_element_by_xpath('//img')
+        # Using beautiful soup
         soup = BeautifulSoup(imageClass.get_attribute('innerHTML'), "html.parser")
         imageUrl = soup.find('img')['src']
-        print(imageUrl)
-
-        # imageUrlElement = imageClass.find_element_by_xpath("//img[contains(@src,'pick-n-pay-header2.png')]")
-        # print(imageUrlElement.get_attribute('textContent'))
-        # print(imageUrlElement.get_attribute('innerHTML'))
-        # print(imageUrlElement.get_attribute('outerHTML'))
-        
-        # print(imageClass.get_attribute('innerHTML'))
-        # print(imageUrlElement.get_attribute('src'))
-        # imageUrl = imageUrlElement.get_attribute('src')
         return imageUrl
     
     def findImageTitle(self,productElement):
@@ -237,30 +216,44 @@ class PnP:
         # print(promotionClass.text)
         return promotionClass.text
     
-    # def checkVitality(self,productElement):
-
-
-    #     # print(promotionClass.get_attribute("innerHTML"))
-    
-
+    def paginationNext(self,driver):
+        next = driver.find_element_by_xpath("/html/body/main/div[4]/div[2]/div/div[1]/div[3]/div[2]/div[2]/div/div[1]/div[4]/div/div[2]/div[2]")
+        nextButton = next.find_element_by_class_name('pagination-next')
+        nextButton.click()
         
+    
+    def paginationNextt(self,driver):
+        next = driver.find_element_by_xpath("/html/body/main/div[4]/div[2]/div/div[1]/div[3]/div[2]/div[2]/div/div[1]/div[4]/div/div[2]/div[2]")
+        paginationClass = next.find_element_by_class_name('pagination')
+        uClass = paginationClass.find_element_by_xpath("//li[4]")
 
-
-
+        soup = BeautifulSoup(paginationClass.get_attribute('innerHTML'), "html.parser")
+        lastPage = soup.find("li",class_="pagination-next disabled")
+        print(lastPage)
+        if lastPage != None:
+            print("retruened true")
+            return False
+        print("returned false")
+        return True  
+    
+    def collectData(self,driver):
+        count = 0
+        self.browseProducts(driver)
+        while(self.paginationNextt(driver)):
+            self.paginationNext(driver)
+            self.browseProducts(driver)
 
 pnp = PnP()
-
-# pnp.changeWindowWidth(driver, 800)
-time.sleep(1)
+time.sleep(4)
 pnp.AcceptCookies(driver)
 categories_list = pnp.collectCategories(driver)
-
 wait = WebDriverWait(driver, 10)
 pnp.goToCategory(driver,categories_list[1],wait)
-# wait = WebDriverWait(driver, 10)
-# pnp.changeWindowWidth(driver, 1284)
 pnp.changeView(driver,wait)
-pnp.browseProducts(driver)
+pnp.collectData(driver)
+
+
+
 time.sleep(2)
 
 driver.quit()
