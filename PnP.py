@@ -43,7 +43,8 @@ class PnP:
             wait = WebDriverWait(driver, 10)
             CategoryPageLink = wait.until(EC.presence_of_element_located((By.XPATH,"//*[@id=\"myModal\"]/div/div/div[3]/button[2]")))
             CategoryPageLink.click()
-        
+         
+
             return True
         except :
             return False

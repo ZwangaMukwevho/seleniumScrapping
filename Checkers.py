@@ -69,8 +69,7 @@ class Checkers:
         except:
             self.findCategory(driver,category)
 
-        
-
+    
         csv_file = open(name,"w")
         csv_writer = csv.writer(csv_file,delimiter=',')
         csv_writer.writerow(['title','imageUrl','Sale Price','Normal Price','sale Type','Promo message','Due date'])
