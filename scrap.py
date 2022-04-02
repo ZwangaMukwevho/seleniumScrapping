@@ -6,7 +6,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-# import Action chains 
+# import Action chains
 from selenium.webdriver.common.action_chains import ActionChains
 
 # Import exceptions
@@ -20,22 +20,31 @@ from bs4 import BeautifulSoup
 from Checkers import Checkers
 from test import ProductData
 
+# from webdriver_manager.chrome import ChromeDriverManager
+# from webdriver_manager.utils import ChromeType
+
+# driver = webdriver.Chrome(ChromeDriverManager(
+#     chrome_type=ChromeType.CHROMIUM).install())
+
 
 # Path to chrome driver
-PATH = "/mnt/c/Users/zwang/OneDrive/Desktop/Apps/chromedriver.exe"
+PATH = "/mnt/c/Users/zwang/OneDrive/Desktop/Apps/chrome_driver/test/chromedriver.exe"
 options = webdriver.ChromeOptions()
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
-driver = webdriver.Chrome(executable_path=PATH,options=options)
+driver = webdriver.Chrome(executable_path=PATH, options=options)
+
+
 driver.get("https://www.checkers.co.za/")
 
 
 # Clicking on the specific cartegory
 productDataObject = ProductData()
-shop = Checkers(driver,productDataObject)
+shop = Checkers(driver, productDataObject)
 loop = asyncio.get_event_loop()
 
 testList = loop.run_until_complete(shop.getCategories(driver))
 print(testList[5])
-navigate = loop.run_until_complete(shop.gatherCategoryData(driver,testList[5],"food.csv"))
+navigate = loop.run_until_complete(
+    shop.gatherCategoryData(driver, testList[5], "food.csv"))
 
-driver.quit() # Closes the browser tab
+driver.quit()  # Closes the browser tab

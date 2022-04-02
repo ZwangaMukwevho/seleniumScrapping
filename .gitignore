@@ -1,0 +1,6 @@
+# Directories
+comsci/
+__pycache__/
+
+# specific files
+*.csv
